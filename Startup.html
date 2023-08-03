@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Student List</title>
@@ -10,51 +10,49 @@
             padding: 0;
         }
 
-            #student-list li {
-                margin: 10px 0;
-                border-bottom: 1px solid #ddd;
-            }
+        #student-list li {
+            margin: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
 
-                #student-list li:last-child {
-                    border-bottom: none;
-                }
+        #student-list li:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
-    <h2>Student List</h2>
-    <input type="text" id="search" placeholder="Search students...">
-    <ul id="student-list"></ul>
-    <script>
-        $(document).ready(function () {
-            var students = [];
+<h2>Student List</h2>
+<input id="search" placeholder="Search students..." type="text" list="student-list">
+<datalist id="student-list">
+</datalist>
+<script>
+    $(document).ready(function () {
+        let students = [];
 
-            // Fetch student data
-            $.get('http://localhost:20803/api/students', function (data)
-            {
-                students = data;
-                updateStudentList(students);
-            });
+        function fullName(student) {
+            return student.FirstName + ' ' + student.LastName;
+        }
 
-            // Handle search input
-            $('#search').on('input', function ()
-            {
-                var query = $(this).val().toLowerCase();
-                var filteredStudents = students.filter
-                    (student =>
-                    (student.FirstName.toLowerCase().startsWith(query) || student.LastName.toLowerCase().startsWith(query))
-                );
-                updateStudentList(filteredStudents);
-            });
-
-            function updateStudentList(studentData)
-            {
-                $('#student-list').empty();
-                studentData.forEach(student =>
-                {
-                    $('#student-list').append('<li>' + student.FirstName + ' ' + student.LastName);
-                });
-            }
+        // // Fetch student data
+        $.get('http://localhost:20803/api/students', function (data) {
+            students = data;
+            updateStudentList(students);
         });
-    </script>
+
+        // Handle search input
+        $('#search').on('input', function () {
+            const query = $(this).val().toLowerCase();
+            const filteredStudents = students.filter(student => fullName(student).toLowerCase().includes(query));
+            updateStudentList(filteredStudents);
+        });
+
+        function updateStudentList(studentData) {
+            $('#student-list').empty();
+            studentData.forEach(student => {
+                $('#student-list').append('<option>' + fullName(student) + '</option>');
+            });
+        }
+    });
+</script>
 </body>
 </html>
