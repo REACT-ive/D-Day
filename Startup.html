@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Student List</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        #student-list {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+            #student-list li {
+                margin: 10px 0;
+                border-bottom: 1px solid #ddd;
+            }
+
+                #student-list li:last-child {
+                    border-bottom: none;
+                }
+    </style>
+</head>
+<body>
+    <h2>Student List</h2>
+    <input type="text" id="search" placeholder="Search students...">
+    <ul id="student-list"></ul>
+    <script>
+        $(document).ready(function () {
+            var students = [];
+
+            // Fetch student data
+            $.get('http://localhost:20803/api/students', function (data)
+            {
+                students = data;
+                updateStudentList(students);
+            });
+
+            // Handle search input
+            $('#search').on('input', function ()
+            {
+                var query = $(this).val().toLowerCase();
+                var filteredStudents = students.filter
+                    (student =>
+                    (student.FirstName.toLowerCase().startsWith(query) || student.LastName.toLowerCase().startsWith(query))
+                );
+                updateStudentList(filteredStudents);
+            });
+
+            function updateStudentList(studentData)
+            {
+                $('#student-list').empty();
+                studentData.forEach(student =>
+                {
+                    $('#student-list').append('<li>' + student.FirstName + ' ' + student.LastName);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
